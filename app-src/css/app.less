@@ -1,0 +1,76 @@
+@import (inline) "normalize.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.convert(@px) {
+  @var: unit(@px * .75);
+  @pt: ~'@{var}pt';
+}
+
+#wr_size_detect {
+    position: absolute;
+    display: block;
+    top: -999px;
+    left: -999px;
+    width: 1pt;
+    height: 1pt;
+}
+
+.book {
+    overflow: hidden;
+    box-sizing: border-box;
+    width: 100%;
+    margin-bottom: 0;
+    padding: .convert(10px)[@pt] .convert(20px)[@pt];
+    display: flex;
+    .cover-img {
+        width: .convert(84px)[@pt];
+        height: .convert(112px)[@pt];
+        .cover {
+            width: 100%;
+            height: 100%;
+        }
+    }
+    .info {
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box;
+        height: .convert(112px)[@pt];
+        margin-left: .convert(20px)[@pt];
+        padding: .convert(10px)[@pt] 0;
+        flex: 1;
+        .name {
+            font-size: .convert(16px)[@pt];
+            font-weight: 700;
+        }
+        .dot {
+            margin: 0 .convert(7px)[@pt];
+        }
+    }
+    .sub, .update-info {
+        display: flex;
+    }
+}
+
+.readerPage .readerToolBar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0 6pt;
+    z-index: 5;
+    background-color: #fff;
+    border-top: 2px solid #7f7f7f;
+    overflow: hidden;
+    height: 26pt;
+    line-height: 26pt;
+}
+
+
+

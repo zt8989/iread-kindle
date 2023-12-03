@@ -1,0 +1,83 @@
+<div id="readerPage" class="readerPage readerPage_LastPage">
+   <div id="readerPage_InShelf" class="readerPage_InShelf">
+      <div id="readerPageScroll" class="readerPageScroll" style="opacity: 1;">
+         <div id="readerToolBar" class="readerToolBar readerToolBar_Expand" style="padding-bottom: 0px !important;">
+            <span id="readerToolBar_nextPage" class="readerToolBar_nextPage">下一页</span> <span
+               id="readerToolBar_prevPage" class="readerToolBar_prevPage">上一页</span> <span id="readerToolBar_shelf"
+               class="readerToolBar_shelf" ng-click="toBook()">书架</span> <span id="readerToolBar_note"
+               class="readerToolBar_note" style="opacity: 1;">划线</span> <span id="readerToolBar_noteList"
+               class="readerToolBar_noteList">笔记</span> <span id="readerToolBar_font"
+               class="readerToolBar_font">字体</span> <span id="readerToolBar_catalog"
+               class="readerToolBar_catalog">目录</span> <span id="readerToolBar_cancelNote"
+               class="readerToolBar_cancelNote">取消</span> <span class="readerToolBar_tip">点击文字以选中</span></div> <!---->
+         <div id="readerContent" class="readerContent fontLevel3" style="top: 0px;"> 
+            <p ng-repeat="line in content">
+               {{ line }}
+            </p>
+         </div>
+      </div>
+      <div id="readerCatalog" class="readerCatalog">
+         <div id="readerCatalog_content" class="readerCatalog_content">
+            <div id="readerCatalog_header" class="readerCatalog_header"><span id="readerCatalog_scrollBottom"
+                  class="readerCatalog_scrollBottom"></span>
+               <p class="readerCatalog_bookTitle">跨越不可能</p>
+            </div>
+            <ul id="readerCatalog_list" class="readerCatalog_list"></ul>
+            <div id="readerCatalog_tool" class="readerCatalog_tool"><span id="readerCatalog_prevPage"
+                  class="readerCatalog_prevPage">上一页</span> <span id="readerCatalog_nextPage"
+                  class="readerCatalog_nextPage">下一页</span></div>
+         </div>
+      </div>
+      <div id="readerNoteList" class="readerNoteList">
+         <div id="readerNoteList_content" class="readerNoteList_content">
+            <div id="readerNoteList_header" class="readerNoteList_header"><span id="readerNoteList_scrollBottom"
+                  class="readerNoteList_scrollBottom"></span>
+               <p class="readerNoteList_chapterTitle">我的笔记</p>
+            </div>
+            <ul id="readerNoteList_list" class="readerNoteList_list"></ul>
+            <div id="readerNoteList_empty" class="readerNoteList_empty">暂无笔记</div>
+            <div id="readerNoteList_tool" class="readerNoteList_tool"><span id="readerNoteList_prevPage"
+                  class="readerNoteList_prevPage">上一页</span> <span id="readerNoteList_nextPage"
+                  class="readerNoteList_nextPage">下一页</span></div>
+         </div>
+      </div>
+      <div id="readerFontSetting" class="readerFontSetting fontSetting_Level3">
+         <div id="readerFontMask" class="readerFontMask"></div>
+         <div id="readerFontDialog" class="readerFontDialog">
+            <div class="header">
+               <p>字体设置</p>
+            </div>
+            <div class="content"><span class="largeText">大</span> <span class="smallText">小</span>
+               <div id="readerFontSettingBar" class="textLevel"><span id="level1" class="level1"></span> <span
+                     id="level2" class="level2"></span> <span id="level3" class="level3"></span> <span id="level4"
+                     class="level4"></span> <span id="level5" class="level5"></span> <em class="line"></em> <em
+                     class="curLevel"></em></div>
+            </div>
+         </div>
+      </div>
+      <div id="readerSelectionMenu" class="readerSelectionMenu"><span id="raederMenuAddNote"
+            class="raederMenuAddNote">划线</span> <span id="readerMenuNext" class="readerMenuNext">选中下一句</span> <span
+            id="raederMenuRemoveNote" class="raederMenuRemoveNote">删除划线</span></div>
+      <div id="readerToast" class="readerToast">
+         <p id="readerToast_text" class="readerToast_text"></p>
+      </div>
+      <div class="readerPayTips">
+         <p class="readerPayTips_text">请在微信读书 app 购买后继续阅读</p>
+      </div>
+      <div id="readerFooterNote" class="readerFooterNote">
+         <p id="readerFooterNote_text" class="readerFooterNote_text"></p>
+      </div>
+      <div id="readerLastPage" class="readerLastPage">
+         <p class="text">全书完</p>
+         <p class="subText"></p>
+      </div>
+      <div id="readerLoading" class="readerLoading" style="display: none;">
+         <p id="readerLoading_percent" class="readerLoading_text">内容加载中...</p>
+      </div>
+      <div id="readerAssistDom" class="readerAssistDom">
+         <div id="assist_contentPadding" style="width: 10pt;"></div>
+         <div id="assist_catalogItemHeight" style="width: 24pt;"></div>
+         <div id="assist_rectInset" style="width: 3pt;"></div>
+      </div>
+   </div>
+</div>

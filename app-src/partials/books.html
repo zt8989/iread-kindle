@@ -1,0 +1,19 @@
+<div  class="book" ng-repeat="book in shelfPage" ng-click="toDetail(book)">
+    <div  class="cover-img"><img  class="cover"
+            ng-src="{{ getCover(book.coverUrl) }}"
+            alt="" loading="lazy"></div>
+    <div  class="info">
+        <div  class="name">{{ book.name }}</div>
+        <div  class="sub">
+            <div  class="author">{{ book.author }}</div><!---->
+            <div  class="update-info">
+                <div  class="dot">•</div>
+                <div  class="size">共{{ book.totalChapterNum }}章</div>
+                <div  class="dot">•</div>
+                <div  class="date">5天前</div>
+            </div>
+        </div><!---->
+        <div  class="dur-chapter"> 已读：{{ book.durChapterTitle }}</div>
+        <div  class="last-chapter">最新：{{ book.latestChapterTitle }}</div>
+    </div>
+</div>

@@ -1,0 +1,13 @@
+{
+  "plugins": ["transform-inline-environment-variables"],
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "modules": false,
+        "useBuiltIns": "entry",
+        "corejs": "3"
+      }
+    ]
+  ]
+}
