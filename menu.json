@@ -1,0 +1,23 @@
+{
+	"items": [
+		{
+			"name": "Iread Kindle",
+			"priority": -1,
+			"items": [
+				{
+					"name": "Start",
+					"priority": 1,
+					"action": "./filebrowser_start.sh",
+					"param": ""
+				},
+				{
+					"name": "Kill",
+					"priority": 5,
+					"action": "./kill.sh",
+					"param": "",
+					"exitmenu": false
+				}
+			]
+		}
+	]
+}

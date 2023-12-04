@@ -16,6 +16,11 @@
         <meta content="no-referrer" name="referrer" />
         <link rel="stylesheet" href="css/app.css">
         <script>
+          window.debug = true;
+          if (
+            navigator.userAgent.indexOf("X11") > -1 &&
+            navigator.userAgent.indexOf("Linux armv7") > -1
+          ) {
             window.onerror = function (
               errorMessage,
               scriptURI,
@@ -41,13 +46,18 @@
               alert(errorString);
               return true;
             };
+          }
         </script>
     </head>
     <body >
-        <div ng-view></div>
-        <script src="lib/angular.min.js"></script>
-        <script src="lib/angular-route.min.js"></script>
-        <script src="js/app.js"></script>
-        <script src="js/controllers.js"></script>
+      <div id="wr_size_detect"></div>
+      <div ng-view></div>
+      <script src="lib/angular.min.js"></script>
+      <script src="lib/angular-route.min.js"></script>
+      <script src="lib/global.35483d.js"></script>
+      <script src="lib/cookie.0e551c.js"></script>
+      <script src="js/app.js"></script>
+      <script src="js/services.js"></script>
+      <script src="js/controllers.js"></script>
     </body>
 </html>

@@ -1,108 +1,238 @@
-var ireadControllers = angular.module('ireadControllers', []);
+var ireadControllers = angular.module('ireadControllers', ['ireadServices']);
 
-ireadControllers.controller("BookListCtrl", ['$scope', '$http', '$location', function BookListCtrl($scope, $http, $location){
-  const baseUrl = `${process.env.VUE_APP_BASE_URL}:${process.env.VUE_APP_PORT}`
-      $http.get(baseUrl +"/getBookshelf")
-          .then(res => {
-              $scope.shelf = res.data.data
-              $scope.shelfPage = $scope.shelf.slice(0, 3)
-          })
+function getZoom() {
+  return parseFloat(window.getComputedStyle(document.body, null).zoom)
+}
 
-      $scope.getCover = (coverUrl) => {
-          return /^data:/.test(coverUrl)
-            ? coverUrl
-            : `${process.env.VUE_APP_BASE_URL}:${process.env.VUE_APP_PORT}` +
-             '/cover?path=' +
-                encodeURIComponent(coverUrl);
-        }
+ireadControllers.controller("BookListCtrl", [
+  '$scope', '$http', '$location', '$timeout', 'storage',
+  function BookListCtrl($scope, $http, $location, $timeout, storage) {
+    var baseUrl; 
+    storage.getBookApiUrl().then(function(res){
+      baseUrl = res
+      getBookshelf()
+    });
+    let page = 1
+    let maxPage = 1
 
-      $scope.toDetail = (book) => {
-          const { bookUrl, bookName, bookAuthor, chapterIndex, chapterPos } = book
-          sessionStorage.setItem("bookUrl", bookUrl);
-          sessionStorage.setItem("bookName", bookName);
-          sessionStorage.setItem("bookAuthor", bookAuthor);
-          sessionStorage.setItem("chapterIndex", chapterIndex);
-          sessionStorage.setItem("chapterPos", chapterPos);
-          const readingRecent = {
-            name: bookName,
-            author: bookAuthor,
-            url: bookUrl,
-            chapterIndex: chapterIndex,
-            chapterPos: chapterPos,
-          };
-          localStorage.setItem("readingRecent", JSON.stringify(readingRecent));
-          $location.path("/detail")
-        }
+    var P, ke, ve;
+    P = document.getElementById("shelfToolBar"),
+    ve = document.documentElement.clientHeight,
+    ke = window.outerHeight
+    P && (P.style.cssText = "padding-bottom:" + 1.5 * Math.abs(ke - ve) + "px !important")
+
+    $scope.nextPage = () => {
+      if (page === maxPage) return
+      page += 1
+      $scope.renderTop = -1 * page *　(P.offsetTop)
+    }
+
+    $scope.prevPage = () => {
+      if(page === 0) return
+      page -= 1
+      $scope.renderTop = Math.min(0, -1 * page * (P.offsetTop))
+    }
+
+    $scope.setting = function () {
+      var b = prompt("请输入阅读的url地址，比如http://192.168.1.2:1122", baseUrl);
+      if (b && "http" === b.slice(0, 4)) {
+        baseUrl = b
+        storage.saveBookApiUrl(baseUrl);
+        getBookshelf();
+      } else {
+        alert("请输入正确的地址");
+      }
+    };
+
+
+    let shelf = []
+
+    function getBookshelf() {
+      $http.get(baseUrl + "/getBookshelf").then(function (res) {
+        $scope.shelfPage = shelf = res.data.data;
+        $timeout(function () {
+          var container = document.getElementById("shelfTable");
+          maxPage = Math.floor((container.lastElementChild.offsetTop + container.lastElementChild.offsetHeight) / P.offsetTop);
+        }, 0);
+      }).catch(function(e){
+        console.log(e)
+      });
+    }
+
+    $scope.getCover = (coverUrl) => {
+        return /^data:/.test(coverUrl)
+          ? coverUrl
+          : baseUrl +
+            '/cover?path=' +
+              encodeURIComponent(coverUrl);
+    }
+
+    $scope.toDetail = function (book) {
+      storage.saveBook(book).then(function(){
+        $location.path("/detail");
+      })
+    };
   }]
 )
 
-ireadControllers.controller("BookDetailCtrl", ['$scope', '$http', '$location',function BookDetailCtrl($scope, $http, $location){
-  const baseUrl = `${process.env.VUE_APP_BASE_URL}:${process.env.VUE_APP_PORT}`
+ireadControllers.controller("BookDetailCtrl", 
+['$scope', '$http', '$location', '$document', '$timeout', 'storage', '$q',
+function BookDetailCtrl($scope, $http, $location, $document, $timeout, storage, $q) {
+  var baseUrl;
+  var bookItem
+  $q.all([storage.getBookApiUrl(), storage.getBook()])
+  .then(function(results){
+    baseUrl = results[0]
+    bookItem = results[1]
+    init()
+  })
+  let catalog = []
+  var zoom = getZoom() || 1
+
+  $scope.chapterIndex = 1
+  $scope.content = []
+  $scope.loading = true
+  $scope.renderTop = 0
+  let page = 1
+  var maxPage = 1;
+
+  // 目录
+  $scope.categoryModal = false
+  $scope.openCategoryModal = function (e) {
+    e && e.stopPropagation()
+    $scope.categoryModal = true;
+  };
+  $scope.closeCategoryModal = function (e) {
+    e && e.stopPropagation()
+    $scope.categoryModal = false;
+  };
+
+  // 字体
+  $scope.fontSettingModal = false
+  $scope.openFontSettingModal = function (e) {
+    e && e.stopPropagation()
+    $scope.fontSettingModal = true;
+  };
+  $scope.closeFontSettingModal = function (e) {
+    console.log(e)
+    e && e.stopPropagation()
+    $scope.fontSettingModal = false;
+  };
+
+  $scope.toBook = () => {
+    $location.path("/")
+  }
+    
+  $scope.handleRenderPageClick = function (e) {
+    var r = e.clientX / zoom
+    var a = e.target.offsetWidth
+    if(r < a / 3){
+      $scope.prevPage()
+    } else {
+      $scope.nextPage()
+    }
+  }
+
+  var P, ke, ve;
+  P = document.getElementById("readerToolBar"),
+  ve = document.documentElement.clientHeight,
+  ke = window.outerHeight
+  P && (P.style.cssText = "padding-bottom:" + 1.5 * Math.abs(ke - ve) + "px !important")
+
+  $scope.nextPage = function (e) {
+    // e && e.stopPropagation()
+    if ($scope.loading) return;
+    if (page === maxPage) return nextChapter();
+    page += 1;
+    console.log("nextPage", page)
+    $scope.renderTop = -1 * (page - 1) * (P.offsetTop - P.clientHeight);
+    console.log("nextPage", $scope.renderTop)
+  };
+  $scope.prevPage = function (e) {
+    // e && e.stopPropagation()
+    if ($scope.loading) return;
+    if (page === 1) return prevChapter();
+    page -= 1;
+    console.log("prevPage", page)
+    $scope.renderTop = Math.min(0, -1 * (page - 1) * (P.offsetTop - P.clientHeight));
+    console.log("prevPage", $scope.renderTop)
+  };
+
   function getCatalog(bookUrl) {
       return $http.get(baseUrl + "/getChapterList?url=" + encodeURIComponent(bookUrl));
-    }
+  }
 
-    $scope.chapterIndex = 1
-    $scope.content = []
-  function getContent(index, reloadChapter = true, chapterPos = 0) {
-      let bookUrl = sessionStorage.getItem("bookUrl");
-      $http
+  function setTitle(){
+    document.title = bookItem.name + " | " + catalog[bookItem.durChapterIndex || 0].title;
+  }
+
+  function saveBookRemoteAndLocal(bookItem) {
+    return storage.saveBook(bookItem).then(function(){
+      return $http.post(baseUrl + "/saveBookProgress", _objectSpread(_objectSpread({}, bookItem), {}, {
+        durChapterTime: new Date().getTime(),
+        durChapterTitle: catalog[bookItem.durChapterIndex || 0].title
+      }));
+    })
+  }
+  function nextChapter() {
+    if ($scope.loading) return;
+    $scope.loading = true;
+    bookItem.durChapterIndex += 1;
+    getContent(bookItem.durChapterIndex).then(function (res) {
+      $scope.loading = false;
+      $scope.renderTop = 0;
+      page = 1
+      setTitle();
+      return saveBookRemoteAndLocal(bookItem);
+    });
+  }
+  function prevChapter() {
+    if ($scope.loading) return;
+    if(bookItem.durChapterIndex === 1) return
+    $scope.loading = true;
+    bookItem.durChapterIndex -= 1;
+    getContent(bookItem.durChapterIndex).then(function (res) {
+      $scope.loading = false;
+      setTitle();
+      return saveBookRemoteAndLocal(bookItem);
+    });
+  }
+
+  function getContent(index) {
+      let bookUrl = bookItem.bookUrl
+      return $http
         .get(
           baseUrl + "/getBookContent?url=" +
             encodeURIComponent(bookUrl) +
             "&index=" +
-            $scope.chapterIndex
+            index
         )
         .then(
           (res) => {
             $scope.content = res.data.data.split(/\n+/);
-            console.log($scope.content)
+            $timeout(() => {
+              const container = document.getElementById("readerContentRenderContainer")
+              maxPage = Math.floor(
+                (container.lastElementChild.offsetTop + container.lastElementChild.offsetHeight) / P.offsetTop
+              )
+            }, 0)
           }
         );
     }
 
-    //获取书籍数据
-    const that = this;
-    let bookUrl = sessionStorage.getItem("bookUrl");
-    let bookName = sessionStorage.getItem("bookName");
-    let bookAuthor = sessionStorage.getItem("bookAuthor");
-    let chapterIndex = Number(sessionStorage.getItem("chapterIndex") || 0);
-    let chapterPos = Number(sessionStorage.getItem("chapterPos") || 0);
-    var book = JSON.parse(localStorage.getItem(bookUrl));
-    if (
-      book == null ||
-      chapterIndex != book.index ||
-      chapterPos != book.chapterPos
-    ) {
-      book = {
-        bookName: bookName,
-        bookAuthor: bookAuthor,
-        bookUrl: bookUrl,
-        index: chapterIndex,
-        chapterPos: chapterPos,
-      };
-      localStorage.setItem(bookUrl, JSON.stringify(book));
-    }
-
-    getCatalog(bookUrl).then(
-      (res) => {
-        let catalog = res.data.data;
-        $scope.setReadingBook = book
-        $scope.setCatalog = catalog
-        var index = $scope.chapterIndex;
-        getContent(index, true, chapterPos);
+    function init(){
+      getCatalog(bookItem.bookUrl).then(function (res) {
+        catalog = res.data.data;
+        var index = bookItem.durChapterIndex || 0;
+        getContent(index, true, bookItem.durChapterPos).then(function () {
+          $scope.loading = false;
+        });
         //第二次点击同一本书 页面标题不会变化
-        document.title = null;
-        document.title = bookName + " | " + catalog[index].title;
-      },
-      (err) => {
+        setTitle();
+      }, function (err) {
         throw err;
-      }
-    );
+      });
+    }
       
-
-      $scope.toBook = () => {
-          $location.path("/")
-      }
   }]
 )

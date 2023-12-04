@@ -1,10 +1,11 @@
 @import (inline) "normalize.css";
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+// reset 
+body, dd, dl, fieldset, form, h1, h2, h3, h4, h5, h6, legend, p, pre {
+    margin: 0;
 }
+
+// books
 
 .convert(@px) {
   @var: unit(@px * .75);
@@ -20,16 +21,54 @@
     height: 1pt;
 }
 
+// 书架页面
+
+.shelfPage {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 10pt;
+
+    .shelfBooksContainer {
+        position: absolute;
+        left: 10pt;
+        right: 10pt;
+        top: 0;
+        bottom: 0;
+        overflow: hidden;
+        color: #000;
+    }
+
+    .shelfBooksTable {
+        position: relative;
+        height: 100%;
+    }
+}
+
+.shelfPage .shelfContentContainer {
+    height: 100%;
+    overflow: hidden;
+}
+
+.shelfPage .shelfContentContainer .shelfContentScroller {
+    position: relative;
+    padding: 0 10pt;
+    height: 100%;
+    overflow: hidden;
+}
+
+
 .book {
     overflow: hidden;
     box-sizing: border-box;
     width: 100%;
-    margin-bottom: 0;
-    padding: .convert(10px)[@pt] .convert(20px)[@pt];
+    margin: 7pt 0 14pt 0;
     display: flex;
     .cover-img {
-        width: .convert(84px)[@pt];
-        height: .convert(112px)[@pt];
+        width: .convert(84 * 0.75px)[@pt];
+        height: .convert(112 * 0.75px)[@pt];
         .cover {
             width: 100%;
             height: 100%;
@@ -39,14 +78,13 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
         box-sizing: border-box;
-        height: .convert(112px)[@pt];
-        margin-left: .convert(20px)[@pt];
-        padding: .convert(10px)[@pt] 0;
+        height: .convert(112 * 0.75px)[@pt];
+        margin-left: .convert(8px)[@pt];
         flex: 1;
+        font-size: 8pt;
         .name {
-            font-size: .convert(16px)[@pt];
+            font-size: 10pt;
             font-weight: 700;
         }
         .dot {
@@ -57,6 +95,136 @@
         display: flex;
     }
 }
+
+// 底部工具栏
+.shelfPage .shelfToolBar {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0 6pt;
+    z-index: 5;
+    background-color: #fff;
+    border-top: 2px solid #7f7f7f;
+    overflow: hidden;
+    height: 26pt;
+    line-height: 26pt;
+}
+
+.shelfPage .shelfToolBar_Expand {
+    height: 21pt;
+}
+
+.shelfPage .shelfToolBar .shelfToolBar_nextPage, 
+.shelfPage .shelfToolBar .shelfToolBar_prevPage {
+    float: right;
+    padding: 0 7pt;
+    font-size: 9pt;
+    color: #000;
+    cursor: pointer;
+}
+
+.shelfPage .shelfToolBar .shelfToolBar_catalog, 
+.shelfPage .shelfToolBar .shelfToolBar_font, 
+.shelfPage .shelfToolBar .shelfToolBar_note, 
+.shelfPage .shelfToolBar .shelfToolBar_noteList, 
+.shelfPage .shelfToolBar .shelfToolBar_shelf {
+    float: left;
+    padding: 0 5pt;
+    font-size: 9pt;
+    color: #000;
+    cursor: pointer;
+}
+
+// 阅读页面
+
+.readerPage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.readerPage .readerPage_InShelf {
+    height: 100%;
+}
+
+.readerPage .readerPageScroll {
+    position: relative;
+    padding: 0 10pt;
+    height: 100%;
+    overflow: hidden;
+    opacity: 0;
+}
+
+.readerPage .readerContent {
+    position: absolute;
+    left: 10pt;
+    right: 10pt;
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+    color: #000;
+}
+
+.readerPage .readerContentRenderContainer {
+    position: relative;
+    height: 100%;
+    font-size: 11pt;
+    line-height: 1.5em;
+
+    p,div {
+        margin: 1em 0 1.5em 0;
+    }
+}
+
+.readerPage .fontLevel1 .readerContentRenderContainer p {
+    font-size: 9pt!important
+}
+
+.readerPage .fontLevel2 .readerContentRenderContainer p {
+    font-size: 10pt!important
+}
+
+.readerPage .fontLevel3 .readerContentRenderContainer p {
+    font-size: 11pt!important
+}
+
+.readerPage .fontLevel4 .readerContentRenderContainer p {
+    font-size: 12pt!important
+}
+
+.readerPage .fontLevel5 .readerContentRenderContainer p {
+    font-size: 13pt!important
+}
+
+.readerPage .fontLevel1 .readerContentRenderContainer div {
+    font-size: 9pt!important
+}
+
+.readerPage .fontLevel2 .readerContentRenderContainer div {
+    font-size: 10pt!important
+}
+
+.readerPage .fontLevel3 .readerContentRenderContainer div {
+    font-size: 11pt!important
+}
+
+.readerPage .fontLevel4 .readerContentRenderContainer div {
+    font-size: 12pt!important
+}
+
+.readerPage .fontLevel5 .readerContentRenderContainer div {
+    font-size: 13pt!important
+}
+
+// 底部工具栏
 
 .readerPage .readerToolBar {
     position: fixed;
@@ -72,5 +240,299 @@
     line-height: 26pt;
 }
 
+.readerPage .readerToolBar_Expand {
+    height: 21pt;
+}
+
+.readerPage .readerToolBar .readerToolBar_nextPage, .readerPage .readerToolBar .readerToolBar_prevPage {
+    float: right;
+    padding: 0 7pt;
+    font-size: 9pt;
+    color: #000;
+    cursor: pointer;
+}
+
+.readerPage .readerToolBar .readerToolBar_catalog, .readerPage .readerToolBar .readerToolBar_font, .readerPage .readerToolBar .readerToolBar_note, .readerPage .readerToolBar .readerToolBar_noteList, .readerPage .readerToolBar .readerToolBar_shelf {
+    float: left;
+    padding: 0 5pt;
+    font-size: 9pt;
+    color: #000;
+    cursor: pointer;
+}
+
+.readerPage .readerToolBar .readerToolBar_cancelNote {
+    float: left;
+}
+
+.readerPage .readerToolBar .readerToolBar_cancelNote {
+    display: none;
+    padding: 0 5pt;
+    font-size: 9pt;
+    color: #000;
+    cursor: pointer;
+}
+
+.readerPage .readerToolBar .readerToolBar_tip {
+    display: none;
+    position: absolute;
+    left: 50pt;
+    right: 50pt;
+    font-size: 9pt;
+    color: #000;
+    text-align: center;
+}
 
 
+// 字体设置
+
+.readerFontSetting {
+    display: none;
+}
+
+.readerFontMask {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+    background-color: hsla(0,0%,100%,.9);
+}
+
+.readerFontDialog {
+    width: 200pt;
+    height: 94pt;
+    position: absolute;
+    z-index: 101;
+    left: 50%;
+    top: 50%;
+    margin-left: -100pt;
+    margin-top: -80pt;
+    background-color: #fff;
+    border-radius: 10pt;
+    border: 1pt solid #000;
+}
+
+.readerFontDialog .header {
+    margin: 0 14pt;
+    border-bottom: 1pt solid #000;
+    height: 34pt;
+    line-height: 34pt;
+}
+
+.readerFontDialog .header p {
+    font-size: 10pt;
+    font-weight: 700;
+}
+
+.readerFontDialog .content {
+    padding: 20pt 14pt 0;
+    overflow: hidden;
+}
+
+.readerFontDialog .content .largeText {
+    float: right;
+    font-size: 13pt;
+}
+
+.readerFontDialog .content .smallText {
+    float: left;
+    font-size: 13pt;
+}
+
+.readerFontDialog .content .textLevel {
+    position: relative;
+    float: left;
+    width: 124pt;
+    height: 20pt;
+    margin: -1pt 0 8pt 11pt;
+    cursor: pointer;
+}
+
+.readerFontDialog .content .textLevel .line {
+    position: absolute;
+    height: 1pt;
+    left: 0;
+    right: 0;
+    top: 10pt;
+    background-color: #000;
+}
+
+.fontSetting_Level2 .readerFontDialog .textLevel .curLevel {
+    left: 27pt;
+}
+
+.readerFontDialog .textLevel .curLevel {
+    position: absolute;
+    top: 5pt;
+    width: 8pt;
+    height: 8pt;
+    border-radius: 5pt;
+    border: 1pt solid #000;
+    background-color: #fff;
+}
+
+.readerFontDialog .content .textLevel span {
+    position: absolute;
+    width: 1pt;
+    height: 8pt;
+    background-color: #000;
+    top: 6pt;
+}
+
+.readerFontDialog .content .textLevel .level1 {
+    left: 0;
+}
+
+.readerFontDialog .content .textLevel .level2 {
+    left: 31pt;
+}
+
+.readerFontDialog .content .textLevel .level3 {
+    left: 62pt;
+}
+
+.readerFontDialog .content .textLevel .level4 {
+    left: 93pt;
+}
+
+.readerFontDialog .content .textLevel .level5 {
+    left: 124pt;
+}
+
+.fontSetting_Level1 .readerFontDialog .textLevel .curLevel {
+    left: -4pt
+}
+
+.fontSetting_Level2 .readerFontDialog .textLevel .curLevel {
+    left: 27pt
+}
+
+.fontSetting_Level3 .readerFontDialog .textLevel .curLevel {
+    left: 58pt
+}
+
+.fontSetting_Level4 .readerFontDialog .textLevel .curLevel {
+    left: 89pt
+}
+
+.fontSetting_Level5 .readerFontDialog .textLevel .curLevel {
+    left: 120pt
+}
+
+// 目录
+
+.readerCatalog {
+    position: absolute;
+    left: 9999px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+    z-index: 10;
+    background-color: hsla(0,0%,100%,.9)
+}
+
+.readerCatalog_content {
+    float: right;
+    position: relative;
+    width: 70%;
+    max-width: 72%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #fff;
+    border-left: 2px solid #000
+}
+
+.readerCatalog_tool {
+    width: 100%;
+    height: 26pt;
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    bottom: 0;
+    background-color: #fff;
+    border-top: 2px solid #000
+}
+
+.readerCatalog_tool span {
+    width: 50%;
+    height: 100%;
+    line-height: 26pt;
+    text-align: center;
+    font-size: 10pt;
+    float: left;
+    color: #000;
+    cursor: pointer
+}
+
+.readerCatalog_header {
+    position: relative;
+    z-index: 2;
+    height: 28pt;
+    overflow: hidden;
+    padding: 0 8pt;
+    background-color: #fff;
+    border-bottom: 2px solid #000
+}
+
+.readerCatalog_bookTitle {
+    margin-top: 7pt;
+    font-size: 10pt;
+    color: #000;
+    padding-right: 6pt;
+    font-weight: 700;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    word-wrap: normal
+}
+
+.readerCatalog_scrollBottom {
+    float: right;
+    margin-top: 6pt;
+    padding: 1pt 4pt;
+    font-size: 9pt;
+    background-color: #000;
+    color: #fff;
+    cursor: pointer
+}
+
+.readerCatalog_list {
+    position: relative;
+    width: 100%;
+    padding-bottom: 26pt
+}
+
+// 最后一页
+
+.readerLastPage {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    padding: 100pt 4pt 0;
+    background-color: #fff;
+}
+
+// 加载中
+
+.readerLoading {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    padding: 100pt 4pt 0;
+    background-color: #fff;
+}
+
+.readerLoading_text {
+    width: 100%;
+    font-size: 10pt;
+    text-align: center;
+    color: #000;
+}
