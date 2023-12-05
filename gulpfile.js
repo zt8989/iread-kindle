@@ -48,3 +48,5 @@ function startServer() {
 }
 
 gulp.task('watch', gulp.parallel(watchJs, watchHtml, watchCss))
+
+gulp.task('watch-server', gulp.parallel(watchJs, watchHtml, watchCss, startServer))

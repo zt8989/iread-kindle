@@ -77,34 +77,69 @@ ireadControllers.controller("BookListCtrl", [
 
 ireadControllers.controller("BookDetailCtrl", 
 ['$scope', '$http', '$location', '$document', '$timeout', 'storage', '$q',
-function BookDetailCtrl($scope, $http, $location, $document, $timeout, storage, $q) {
+  'fonts',
+function BookDetailCtrl($scope, $http, $location, $document, $timeout, 
+  storage, $q, fonts) {
   $scope.catalog = []
   $scope.chapterIndex = 1
   $scope.content = []
   $scope.loading = true
   $scope.renderTop = 0
   $scope.config = {
-    fontLevel: 3
+    fontLevel: 3,
+    fontFamily: fonts[0].key
   }
+  $scope.bookItem = {}
+  $scope.fonts = fonts
+
+  $scope.$watch("myfont", function(newValue, oldValue){
+    if(newValue){
+      $("#readerContent").attr("style", newValue.css)
+      $scope.config.fontFamily = newValue.key
+      storage.saveReadConfig($scope.config)
+    }
+  })
+
+  $scope.myfont = fonts[0]
+
+
 
   let page = 1
-  var maxPage = 1;
+  var maxPageHeight = 1;
+
+  $scope.catalogRenderTop = 0;
+  var catalogPage = 1;
+  var catalogMaxPageHeight = 1;
+  var catalogOffset = 0;
 
   var baseUrl;
-  var bookItem
   $q.all([storage.getBookApiUrl(), storage.getBook(), storage.getReadConfig()])
   .then(function(results){
     baseUrl = results[0]
-    bookItem = results[1]
+    $scope.bookItem = results[1]
     $scope.config = results[2]
+    
+    for(let i in fonts){
+      if(fonts[i].key === $scope.config.fontFamily){
+        $scope.myfont = fonts[i]
+      }
+    }
     init()
+  }).catch(function(e){
+    console.log(e)
   })
   var zoom = getZoom() || 1
 
   // 目录
   $scope.categoryModal = false
-  $scope.openCategoryModal = function (e) {
-    e && e.stopPropagation()
+  $scope.openCategoryModal = function () {
+    var header = document.getElementById("readerCatalog_header")
+    var list = document.getElementById("readerCatalog_list")
+    var top = header.offsetTop + header.clientHeight
+    var current = list.children[$scope.bookItem.durChapterIndex]
+    var offsetTop = current.offsetTop + current.offsetHeight - top
+    catalogPage = offsetTop > 0 ? (Math.floor(offsetTop / catalogOffset) + 1) : 1
+    $scope.catalogRenderTop = -((catalogPage - 1) * catalogOffset)
     $scope.categoryModal = true;
   };
   $scope.closeCategoryModal = function (e) {
@@ -119,22 +154,23 @@ function BookDetailCtrl($scope, $http, $location, $document, $timeout, storage, 
     $scope.fontSettingModal = true;
   };
   $scope.closeFontSettingModal = function (e) {
-    console.log(e)
     e && e.stopPropagation()
     $scope.fontSettingModal = false;
   };
-
-  
-  $scope.onFontLevelChange = (e) => {
-    e.stopPropagation();
-    var t = parseInt(_.fontSizeLevel) || 0
-      , o = e.clientX / xe
-      , n = e.clientY / xe
-      , e = J.getBoundingClientRect();
-    n < e.top || n > e.bottom || e.left - o > e.width / 10 || o - e.right > e.width / 10 || (e = (o = Math.max(0, o - e.left)) < (e = e.width / 4) / 2 ? 1 : e / 2 <= o && o < e / 2 * 3 ? 2 : e / 2 * 3 <= o && o < e / 2 * 5 ? 3 : e / 2 * 5 <= o && o < e / 2 * 7 ? 4 : 5) !== t && (Me(Be.recordManualRedirect, "recordManualRedirect")(),
-    window.k_localStorage.setLocalStorage("logReaderFontChange", {
-        isInc: t < e ? 1 : 0
-    }),
+  $scope.onFontChange = function(e) {
+    e && e.stopPropagation()
+    var rect = document.getElementById("readerFontSettingBar").getBoundingClientRect()
+    var left = rect.left
+    var right = rect.right
+    var x = e.clientX / zoom
+    var p = (right - left) / 4
+    var level = 1
+    if (x >= left){
+      var div = (x - left) / p
+      level = 1 + Math.floor(div) + ((div - Math.floor(div)) > 0.5 ? 1 : 0)
+    }
+    $scope.config.fontLevel = level
+    storage.saveReadConfig($scope.config)
   }
 
   $scope.toBook = () => {
@@ -155,15 +191,19 @@ function BookDetailCtrl($scope, $http, $location, $document, $timeout, storage, 
   P = document.getElementById("readerToolBar"),
   ve = document.documentElement.clientHeight,
   ke = window.outerHeight
-  P && (P.style.cssText = "padding-bottom:" + 1.5 * Math.abs(ke - ve) + "px !important")
+  var readerCatalog_tool = document.getElementById("readerCatalog_tool")
+  var style = "padding-bottom:" + 1.5 * Math.abs(ke - ve) + "px !important"
+  P && (P.style.cssText = style);
+  readerCatalog_tool && (readerCatalog_tool.style.cssText = style);
 
   $scope.nextPage = function (e) {
     // e && e.stopPropagation()
     if ($scope.loading) return;
-    if (page === maxPage) return nextChapter();
+    var nextOffset = page * (P.offsetTop - P.clientHeight)
+    if (nextOffset > maxPageHeight) return nextChapter();
     page += 1;
     console.log("nextPage", page)
-    $scope.renderTop = -1 * (page - 1) * (P.offsetTop - P.clientHeight);
+    $scope.renderTop = -1 * nextOffset;
     console.log("nextPage", $scope.renderTop)
   };
   $scope.prevPage = function (e) {
@@ -180,9 +220,27 @@ function BookDetailCtrl($scope, $http, $location, $document, $timeout, storage, 
       return $http.get(baseUrl + "/getChapterList?url=" + encodeURIComponent(bookUrl));
   }
 
-  function setTitle(){
-    $scope.chapterIndex = bookItem.durChapterIndex
-    document.title = bookItem.name + " | " + $scope.catalog[bookItem.durChapterIndex || 0].title;
+  $scope.onCatalogPrevPage = function(e){
+    e && e.stopPropagation()
+    if (catalogPage === 1) return
+    catalogPage -= 1;
+    console.log("prevPage", catalogPage)
+    $scope.catalogRenderTop = Math.min(0, -1 * (catalogPage - 1) * catalogOffset);
+    console.log("renderTop", $scope.catalogRenderTop)
+  }
+
+  $scope.onCatalogNextPage = function(e){
+    e && e.stopPropagation()
+    var nextOffset = catalogPage * catalogOffset
+    if (nextOffset > catalogMaxPageHeight) return
+    catalogPage += 1;
+    console.log("nextPage", catalogPage)
+    $scope.catalogRenderTop = -1 * nextOffset;
+    console.log("renderTop", $scope.catalogRenderTop)
+  }
+
+  function setTitle() {
+    document.title = $scope.bookItem.name + " | " + $scope.catalog[$scope.bookItem.durChapterIndex || 0].title;
   }
 
   function saveBookRemoteAndLocal(bookItem) {
@@ -194,65 +252,81 @@ function BookDetailCtrl($scope, $http, $location, $document, $timeout, storage, 
       })
     })
   }
-  function nextChapter() {
+  function goChapter(durChapterIndex) {
     if ($scope.loading) return;
     $scope.loading = true;
-    bookItem.durChapterIndex += 1;
-    getContent(bookItem.durChapterIndex).then(function (res) {
+    $scope.bookItem.durChapterIndex = durChapterIndex;
+    getContent($scope.bookItem.durChapterIndex).then(function (res) {
       $scope.loading = false;
       $scope.renderTop = 0;
       page = 1
       setTitle();
-      return saveBookRemoteAndLocal(bookItem);
+      return saveBookRemoteAndLocal($scope.bookItem);
+    }).catch(function(e) {
+      $scope.loading = false;
+      console.log(e)
     });
   }
+
+  function nextChapter() {
+    if ($scope.loading) return;
+    return goChapter($scope.bookItem.durChapterIndex + 1)
+  }
+
   function prevChapter() {
     if ($scope.loading) return;
-    if(bookItem.durChapterIndex === 1) return
+    if($scope.bookItem.durChapterIndex === 1) return
     $scope.loading = true;
-    bookItem.durChapterIndex -= 1;
-    getContent(bookItem.durChapterIndex).then(function (res) {
+    $scope.bookItem.durChapterIndex -= 1;
+    getContent($scope.bookItem.durChapterIndex).then(function (res) {
       $scope.loading = false;
       setTitle();
-      return saveBookRemoteAndLocal(bookItem);
+      return saveBookRemoteAndLocal($scope.bookItem);
     });
   }
 
   function getContent(index) {
-      let bookUrl = bookItem.bookUrl
-      return $http
-        .get(
-          baseUrl + "/getBookContent?url=" +
-            encodeURIComponent(bookUrl) +
-            "&index=" +
-            index
-        )
-        .then(
-          (res) => {
-            $scope.content = res.data.data.split(/\n+/);
-            $timeout(() => {
-              const container = document.getElementById("readerContentRenderContainer")
-              maxPage = Math.floor(
-                (container.lastElementChild.offsetTop + container.lastElementChild.offsetHeight) / P.offsetTop
-              )
-            }, 0)
-          }
-        );
-    }
+    var bookUrl = $scope.bookItem.bookUrl;
+    return $http.get(baseUrl + "/getBookContent?url=" + encodeURIComponent(bookUrl) + "&index=" + index).then(function (res) {
+      $scope.content = res.data.data.split(/\n+/);
+      $timeout(function () {
+        var container = document.getElementById("readerContentRenderContainer");
+        maxPageHeight = container.lastElementChild.offsetTop + container.lastElementChild.offsetHeight
 
-    function init(){
-      getCatalog(bookItem.bookUrl).then(function (res) {
-        $scope.catalog = res.data.data;
-        var index = bookItem.durChapterIndex || 0;
-        getContent(index, true, bookItem.durChapterPos).then(function () {
-          $scope.loading = false;
-        });
-        //第二次点击同一本书 页面标题不会变化
-        setTitle();
-      }, function (err) {
-        throw err;
-      });
+        var header = document.getElementById("readerCatalog_header")
+        var tool = document.getElementById("readerCatalog_tool")
+        var list = document.getElementById("readerCatalog_list")
+        var top = header.offsetTop + header.clientHeight
+        var bottom = tool.offsetTop
+        catalogOffset = bottom - top 
+        catalogMaxPageHeight = list.lastElementChild.offsetTop 
+          + list.lastElementChild.offsetHeight
+          - top
+      }, 0);
+    });
+  }
+
+  $scope.onChapterClick = function(e, index){
+    e && e.stopPropagation()
+    if(index !== $scope.bookItem.durChapterIndex){
+      goChapter(index)
     }
+    $scope.closeCategoryModal()
+  }
+
+  function init(){
+    getCatalog($scope.bookItem.bookUrl).then(function (res) {
+      $scope.catalog = res.data.data;
+      var index = $scope.bookItem.durChapterIndex || 0;
+      getContent(index, true, $scope.bookItem.durChapterPos).then(function () {
+        $scope.loading = false;
+      });
+      //第二次点击同一本书 页面标题不会变化
+      setTitle();
+    }, function (err) {
+      throw err;
+    });
+  }
       
   }]
 )

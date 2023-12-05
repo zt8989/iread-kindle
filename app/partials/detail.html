@@ -14,25 +14,31 @@
                <span id="readerToolBar_cancelNote"
                class="readerToolBar_cancelNote">取消</span> 
                <span class="readerToolBar_tip">点击文字以选中</span></div> <!---->
-         <div id="readerContent" class="readerContent "  ng-class="'fontLevel' + config.fontLevel" style="top: 0px;"> 
+         <div id="readerContent" class="readerContent" ng-class="'fontLevel' + config.fontLevel" style="top: 0px;"> 
             <div id="readerContentRenderContainer" class="readerContentRenderContainer randomFont" ng-style="{ top: renderTop + 'px' }">
-               <h2 class="chatper-title">{{ catalog[chapterIndex].title }}</h2>
+               <h2 class="readerChapterTitle" style="text-align: center;">{{ catalog[bookItem.durChapterIndex].title }}</h2>
                <p ng-repeat="line in content track by $index">
                   {{ line }}
                </p>
             </div>
          </div>
       </div>
-      <div id="readerCatalog" class="readerCatalog" ng-click="closeCategoryModal()" ng-style="categoryModal ? {left: '0px'} : ''">
+      <div id="readerCatalog" class="readerCatalog" ng-click="closeCategoryModal($event)" ng-style="categoryModal ? {left: '0px'} : ''">
          <div id="readerCatalog_content" class="readerCatalog_content">
-            <div id="readerCatalog_header" class="readerCatalog_header"><span id="readerCatalog_scrollBottom"
-                  class="readerCatalog_scrollBottom">去底部</span>
-               <p class="readerCatalog_bookTitle">跨越不可能</p>
+            <div id="readerCatalog_header" class="readerCatalog_header">
+               <!-- <span id="readerCatalog_scrollBottom"
+                  class="readerCatalog_scrollBottom">去底部</span> -->
+               <p class="readerCatalog_bookTitle">{{ bookItem.name }}</p>
             </div>
-            <ul id="readerCatalog_list" class="readerCatalog_list"></ul>
+            <ul id="readerCatalog_list" class="readerCatalog_list" ng-style="{ top: catalogRenderTop + 'px' }">
+               <li wr-data-uid="9" wr-data-anchor="" class="chapterItem" ng-click="onChapterClick($event, cat.index)" ng-class="cat.index == bookItem.durChapterIndex ? 'chapterItem_current' : ''" ng-repeat="cat in catalog track by cat.url">
+                  <span style="" class="chapterItem_lock"></span>
+                  <span class="chapterItem_link chapterItem_level2">{{ cat.title }}</span>
+               </li>
+            </ul>
             <div id="readerCatalog_tool" class="readerCatalog_tool"><span id="readerCatalog_prevPage"
-                  class="readerCatalog_prevPage">上一页</span> <span id="readerCatalog_nextPage"
-                  class="readerCatalog_nextPage">下一页</span></div>
+                  class="readerCatalog_prevPage" ng-click="onCatalogPrevPage($event)">上一页</span> <span id="readerCatalog_nextPage"
+                  class="readerCatalog_nextPage" ng-click="onCatalogNextPage($event)">下一页</span></div>
          </div>
       </div>
       <!-- <div id="readerNoteList" class="readerNoteList">
@@ -50,20 +56,20 @@
       </div> -->
       <div id="readerFontSetting" class="readerFontSetting" ng-class="'fontSetting_Level' + config.fontLevel" ng-style="fontSettingModal ? {display: 'block'} : ''">
          <div id="readerFontMask" class="readerFontMask" ng-click="closeFontSettingModal($event)"></div>
-         <div id="readerFontDialog" class="readerFontDialog" ng-click="$event.stopPropagation()">
+         <div id="readerFontDialog" class="readerFontDialog"  ng-click="$event.stopPropagation()">
             <div class="header">
                <p>字体设置</p>
             </div>
-            <div class="content"><span class="largeText">大</span> <span class="smallText">小</span>
-               <div id="readerFontSettingBar" class="textLevel" ng-click="onFontLevelChange($event)">
-                  <span id="level1" class="level1" ></span> 
-                  <span id="level2" class="level2" ></span> 
-                  <span id="level3" class="level3" ></span> 
-                  <span id="level4" class="level4" ></span> 
-                  <span id="level5" class="level5" ></span> 
-                  <em class="line"></em> 
-                  <em class="curLevel"></em>
-               </div>
+            <div class="content" ng-click="onFontChange($event)"><span class="largeText">大</span> <span class="smallText">小</span>
+               <div id="readerFontSettingBar" class="textLevel"><span id="level1" class="level1"></span> <span
+                     id="level2" class="level2"></span> <span id="level3" class="level3"></span> <span id="level4"
+                     class="level4"></span> <span id="level5" class="level5"></span> <em class="line"></em> <em
+                     class="curLevel"></em></div>
+            </div>
+            <div class="font" ><label>字体选择</label>
+               <select ng-model="myfont" ng-options="font.title for font in fonts track by font.key">
+                  <!-- <option ng-repeat="font in fonts track by font.key" ng-value="font.key" ng-selected="font.key === myfont">{{ font.title }}</option> -->
+               </select>
             </div>
          </div>
       </div>

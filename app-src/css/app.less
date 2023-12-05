@@ -1,8 +1,22 @@
 @import (inline) "normalize.css";
 
-// reset 
+/* reset */
 body, dd, dl, fieldset, form, h1, h2, h3, h4, h5, h6, legend, p, pre {
     margin: 0;
+}
+
+
+li, ol, ul {
+list-style: none;
+}
+
+fieldset, ol, ul {
+margin: 0;
+padding: 0;
+}
+
+body {
+line-height: 1.5;
 }
 
 // books
@@ -170,6 +184,34 @@ body, dd, dl, fieldset, form, h1, h2, h3, h4, h5, h6, legend, p, pre {
     opacity: 0;
 }
 
+
+.readerChapterTitle {
+    font-size: 11pt;
+    color: #000;
+    margin: 0.5em 0 1em 0;
+}
+
+.fontLevel1 .readerChapterTitle {
+    font-size: 9pt
+}
+
+.fontLevel2 .readerChapterTitle {
+    font-size: 10pt
+}
+
+.fontLevel3 .readerChapterTitle {
+    font-size: 11pt
+}
+
+.fontLevel4 .readerChapterTitle {
+    font-size: 12pt
+}
+
+.fontLevel5 .readerChapterTitle {
+    font-size: 13pt
+}
+  
+
 .readerPage .readerContent {
     position: absolute;
     left: 10pt;
@@ -187,7 +229,7 @@ body, dd, dl, fieldset, form, h1, h2, h3, h4, h5, h6, legend, p, pre {
     line-height: 1.5em;
 
     p,div {
-        margin: 1em 0 1.5em 0;
+        margin: 0.5em 0 1em 0;
     }
 }
 
@@ -308,7 +350,7 @@ body, dd, dl, fieldset, form, h1, h2, h3, h4, h5, h6, legend, p, pre {
 
 .readerFontDialog {
     width: 200pt;
-    height: 94pt;
+    height: 120pt;
     position: absolute;
     z-index: 101;
     left: 50%;
@@ -335,6 +377,11 @@ body, dd, dl, fieldset, form, h1, h2, h3, h4, h5, h6, legend, p, pre {
 .readerFontDialog .content {
     padding: 20pt 14pt 0;
     overflow: hidden;
+}
+
+.readerFontDialog .font {
+  padding: 10pt 14pt 0;
+  overflow: hidden;
 }
 
 .readerFontDialog .content .largeText {
@@ -524,6 +571,38 @@ body, dd, dl, fieldset, form, h1, h2, h3, h4, h5, h6, legend, p, pre {
     padding: 100pt 4pt 0;
     background-color: #fff;
 }
+
+
+.chapterItem {
+  position: relative;
+  height: 24pt;
+  padding: 0 8pt;
+  border-bottom: 2px solid #000;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.chapterItem.chapterItem_current .chapterItem_link {
+  color: #fff;
+  background-color: #000;
+}
+.chapterItem .chapterItem_link {
+  margin-top: 5pt;
+  display: block;
+  font-size: 9pt;
+  color: #000;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  word-wrap: normal;
+}
+
+.chapterItem_level2 {
+  padding-left: 8pt;
+}
+
+/* 其他 */
 
 // 加载中
 

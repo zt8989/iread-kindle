@@ -39,7 +39,7 @@ ireadServices.factory("storage", ["$http", '$location', '$q',
         try {
           const json = localStorage.getItem(key)
           if(json){
-            resolve(JSON.parse())
+            resolve(JSON.parse(json))
           } else {
             resolve(defaultValue)
           }
@@ -129,3 +129,10 @@ ireadServices.factory("storage", ["$http", '$location', '$q',
     }
   }
 }])
+
+ireadServices.constant("fonts", [
+  { key: "STHeiti", title: "黑体", css: "font-family: STHeiti, san-serif;" },
+  { key: "STSong", title: "宋体", css: "font-family: STSong, serif;" },
+  { key: "STKai", title: "楷体", css: "font-family: STKai, serif;" },
+  { key: "STYuan", title: "圆体", css: "font-family: STYuan, san-serif;" },
+])

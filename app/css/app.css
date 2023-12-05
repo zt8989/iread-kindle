@@ -348,6 +348,7 @@ template {
   display: none;
 }
 
+/* reset */
 body,
 dd,
 dl,
@@ -363,6 +364,20 @@ legend,
 p,
 pre {
   margin: 0;
+}
+li,
+ol,
+ul {
+  list-style: none;
+}
+fieldset,
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+}
+body {
+  line-height: 1.5;
 }
 #wr_size_detect {
   position: absolute;
@@ -504,6 +519,26 @@ pre {
   overflow: hidden;
   opacity: 0;
 }
+.readerChapterTitle {
+  font-size: 11pt;
+  color: #000;
+  margin: 0.5em 0 1em 0;
+}
+.fontLevel1 .readerChapterTitle {
+  font-size: 9pt;
+}
+.fontLevel2 .readerChapterTitle {
+  font-size: 10pt;
+}
+.fontLevel3 .readerChapterTitle {
+  font-size: 11pt;
+}
+.fontLevel4 .readerChapterTitle {
+  font-size: 12pt;
+}
+.fontLevel5 .readerChapterTitle {
+  font-size: 13pt;
+}
 .readerPage .readerContent {
   position: absolute;
   left: 10pt;
@@ -521,7 +556,7 @@ pre {
 }
 .readerPage .readerContentRenderContainer p,
 .readerPage .readerContentRenderContainer div {
-  margin: 1em 0 1.5em 0;
+  margin: 0.5em 0 1em 0;
 }
 .readerPage .fontLevel1 .readerContentRenderContainer p {
   font-size: 9pt !important;
@@ -621,7 +656,7 @@ pre {
 }
 .readerFontDialog {
   width: 200pt;
-  height: 94pt;
+  height: 120pt;
   position: absolute;
   z-index: 101;
   left: 50%;
@@ -644,6 +679,10 @@ pre {
 }
 .readerFontDialog .content {
   padding: 20pt 14pt 0;
+  overflow: hidden;
+}
+.readerFontDialog .font {
+  padding: 10pt 14pt 0;
   overflow: hidden;
 }
 .readerFontDialog .content .largeText {
@@ -804,6 +843,33 @@ pre {
   padding: 100pt 4pt 0;
   background-color: #fff;
 }
+.chapterItem {
+  position: relative;
+  height: 24pt;
+  padding: 0 8pt;
+  border-bottom: 2px solid #000;
+  overflow: hidden;
+  cursor: pointer;
+}
+.chapterItem.chapterItem_current .chapterItem_link {
+  color: #fff;
+  background-color: #000;
+}
+.chapterItem .chapterItem_link {
+  margin-top: 5pt;
+  display: block;
+  font-size: 9pt;
+  color: #000;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  word-break: break-all;
+  word-wrap: normal;
+}
+.chapterItem_level2 {
+  padding-left: 8pt;
+}
+/* 其他 */
 .readerLoading {
   position: absolute;
   left: 0;
