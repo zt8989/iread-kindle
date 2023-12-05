@@ -372,6 +372,10 @@ pre {
   width: 1pt;
   height: 1pt;
 }
+.chatper-title {
+  margin: 9pt 0;
+  text-align: center;
+}
 .shelfPage {
   position: absolute;
   left: 0;

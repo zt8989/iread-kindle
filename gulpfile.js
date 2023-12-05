@@ -15,13 +15,13 @@ gulp.task('default', () =>
 );
 
 function watchJs(){
-    return watch('app-src/**/*.js', { ignoreInitial: true, verbose: true })
+    return watch('app-src/**/*.js', { ignoreInitial: false, verbose: true })
         .pipe(babel())
         .pipe(gulp.dest('app'))
 }
 
 function watchHtml(){
-    return watch('app-src/**/*.html', { ignoreInitial: true, verbose: true })
+    return watch('app-src/**/*.html', { ignoreInitial: false, verbose: true })
         .pipe(ejs({
             process: process
         }))
@@ -29,7 +29,7 @@ function watchHtml(){
 }
 
 function watchCss(){
-    return watch('app-src/**/*.less', { ignoreInitial: true, verbose: true })
+    return watch('app-src/**/*.less', { ignoreInitial: false, verbose: true })
     .pipe(less({
         plugins: [new LessAutoprefix()],
         paths: [ path.join(__dirname, 'node_modules', 'normalize.css') ]
@@ -47,4 +47,4 @@ function startServer() {
 		}))
 }
 
-gulp.task('watch', gulp.parallel(watchJs, watchHtml, watchCss, startServer))
+gulp.task('watch', gulp.parallel(watchJs, watchHtml, watchCss))

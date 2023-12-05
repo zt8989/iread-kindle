@@ -14,8 +14,9 @@
                <span id="readerToolBar_cancelNote"
                class="readerToolBar_cancelNote">取消</span> 
                <span class="readerToolBar_tip">点击文字以选中</span></div> <!---->
-         <div id="readerContent" class="readerContent fontLevel3" style="top: 0px;"> 
+         <div id="readerContent" class="readerContent "  ng-class="'fontLevel' + config.fontLevel" style="top: 0px;"> 
             <div id="readerContentRenderContainer" class="readerContentRenderContainer randomFont" ng-style="{ top: renderTop + 'px' }">
+               <h2 class="chatper-title">{{ catalog[chapterIndex].title }}</h2>
                <p ng-repeat="line in content track by $index">
                   {{ line }}
                </p>
@@ -47,17 +48,22 @@
                   class="readerNoteList_nextPage">下一页</span></div>
          </div>
       </div> -->
-      <div id="readerFontSetting" class="readerFontSetting fontSetting_Level3" ng-style="fontSettingModal ? {display: 'block'} : ''">
+      <div id="readerFontSetting" class="readerFontSetting" ng-class="'fontSetting_Level' + config.fontLevel" ng-style="fontSettingModal ? {display: 'block'} : ''">
          <div id="readerFontMask" class="readerFontMask" ng-click="closeFontSettingModal($event)"></div>
-         <div id="readerFontDialog" class="readerFontDialog">
+         <div id="readerFontDialog" class="readerFontDialog" ng-click="$event.stopPropagation()">
             <div class="header">
                <p>字体设置</p>
             </div>
             <div class="content"><span class="largeText">大</span> <span class="smallText">小</span>
-               <div id="readerFontSettingBar" class="textLevel"><span id="level1" class="level1"></span> <span
-                     id="level2" class="level2"></span> <span id="level3" class="level3"></span> <span id="level4"
-                     class="level4"></span> <span id="level5" class="level5"></span> <em class="line"></em> <em
-                     class="curLevel"></em></div>
+               <div id="readerFontSettingBar" class="textLevel" ng-click="onFontLevelChange($event)">
+                  <span id="level1" class="level1" ></span> 
+                  <span id="level2" class="level2" ></span> 
+                  <span id="level3" class="level3" ></span> 
+                  <span id="level4" class="level4" ></span> 
+                  <span id="level5" class="level5" ></span> 
+                  <em class="line"></em> 
+                  <em class="curLevel"></em>
+               </div>
             </div>
          </div>
       </div>

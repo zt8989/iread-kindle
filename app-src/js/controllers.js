@@ -78,23 +78,28 @@ ireadControllers.controller("BookListCtrl", [
 ireadControllers.controller("BookDetailCtrl", 
 ['$scope', '$http', '$location', '$document', '$timeout', 'storage', '$q',
 function BookDetailCtrl($scope, $http, $location, $document, $timeout, storage, $q) {
-  var baseUrl;
-  var bookItem
-  $q.all([storage.getBookApiUrl(), storage.getBook()])
-  .then(function(results){
-    baseUrl = results[0]
-    bookItem = results[1]
-    init()
-  })
-  let catalog = []
-  var zoom = getZoom() || 1
-
+  $scope.catalog = []
   $scope.chapterIndex = 1
   $scope.content = []
   $scope.loading = true
   $scope.renderTop = 0
+  $scope.config = {
+    fontLevel: 3
+  }
+
   let page = 1
   var maxPage = 1;
+
+  var baseUrl;
+  var bookItem
+  $q.all([storage.getBookApiUrl(), storage.getBook(), storage.getReadConfig()])
+  .then(function(results){
+    baseUrl = results[0]
+    bookItem = results[1]
+    $scope.config = results[2]
+    init()
+  })
+  var zoom = getZoom() || 1
 
   // 目录
   $scope.categoryModal = false
@@ -118,6 +123,19 @@ function BookDetailCtrl($scope, $http, $location, $document, $timeout, storage, 
     e && e.stopPropagation()
     $scope.fontSettingModal = false;
   };
+
+  
+  $scope.onFontLevelChange = (e) => {
+    e.stopPropagation();
+    var t = parseInt(_.fontSizeLevel) || 0
+      , o = e.clientX / xe
+      , n = e.clientY / xe
+      , e = J.getBoundingClientRect();
+    n < e.top || n > e.bottom || e.left - o > e.width / 10 || o - e.right > e.width / 10 || (e = (o = Math.max(0, o - e.left)) < (e = e.width / 4) / 2 ? 1 : e / 2 <= o && o < e / 2 * 3 ? 2 : e / 2 * 3 <= o && o < e / 2 * 5 ? 3 : e / 2 * 5 <= o && o < e / 2 * 7 ? 4 : 5) !== t && (Me(Be.recordManualRedirect, "recordManualRedirect")(),
+    window.k_localStorage.setLocalStorage("logReaderFontChange", {
+        isInc: t < e ? 1 : 0
+    }),
+  }
 
   $scope.toBook = () => {
     $location.path("/")
@@ -163,15 +181,17 @@ function BookDetailCtrl($scope, $http, $location, $document, $timeout, storage, 
   }
 
   function setTitle(){
-    document.title = bookItem.name + " | " + catalog[bookItem.durChapterIndex || 0].title;
+    $scope.chapterIndex = bookItem.durChapterIndex
+    document.title = bookItem.name + " | " + $scope.catalog[bookItem.durChapterIndex || 0].title;
   }
 
   function saveBookRemoteAndLocal(bookItem) {
     return storage.saveBook(bookItem).then(function(){
-      return $http.post(baseUrl + "/saveBookProgress", _objectSpread(_objectSpread({}, bookItem), {}, {
+      return $http.post(baseUrl + "/saveBookProgress", {
+        ...bookItem,
         durChapterTime: new Date().getTime(),
-        durChapterTitle: catalog[bookItem.durChapterIndex || 0].title
-      }));
+        durChapterTitle: $scope.catalog[bookItem.durChapterIndex || 0].title
+      })
     })
   }
   function nextChapter() {
@@ -222,7 +242,7 @@ function BookDetailCtrl($scope, $http, $location, $document, $timeout, storage, 
 
     function init(){
       getCatalog(bookItem.bookUrl).then(function (res) {
-        catalog = res.data.data;
+        $scope.catalog = res.data.data;
         var index = bookItem.durChapterIndex || 0;
         getContent(index, true, bookItem.durChapterPos).then(function () {
           $scope.loading = false;

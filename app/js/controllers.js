@@ -1,3 +1,9 @@
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
+function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
+function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
 var ireadControllers = angular.module('ireadControllers', ['ireadServices']);
 function getZoom() {
   return parseFloat(window.getComputedStyle(document.body, null).zoom);
@@ -55,31 +61,35 @@ ireadControllers.controller("BookListCtrl", ['$scope', '$http', '$location', '$t
   };
 }]);
 ireadControllers.controller("BookDetailCtrl", ['$scope', '$http', '$location', '$document', '$timeout', 'storage', '$q', function BookDetailCtrl($scope, $http, $location, $document, $timeout, storage, $q) {
-  var baseUrl;
-  var bookItem;
-  $q.all([storage.getBookApiUrl(), storage.getBook()]).then(function (results) {
-    baseUrl = results[0];
-    bookItem = results[1];
-    init();
-  });
-  var catalog = [];
-  var zoom = getZoom() || 1;
+  $scope.catalog = [];
   $scope.chapterIndex = 1;
   $scope.content = [];
   $scope.loading = true;
   $scope.renderTop = 0;
+  $scope.config = {
+    fontLevel: 3
+  };
   var page = 1;
   var maxPage = 1;
+  var baseUrl;
+  var bookItem;
+  $q.all([storage.getBookApiUrl(), storage.getBook(), storage.getReadConfig()]).then(function (results) {
+    baseUrl = results[0];
+    bookItem = results[1];
+    $scope.config = results[2];
+    init();
+  });
+  var zoom = getZoom() || 1;
 
   // 目录
   $scope.categoryModal = false;
-  $scope.openFontSettingModal = function (e) {
+  $scope.openCategoryModal = function (e) {
     e && e.stopPropagation();
-    $scope.fontSettingModal = true;
+    $scope.categoryModal = true;
   };
-  $scope.closeFontSettingModal = function (e) {
+  $scope.closeCategoryModal = function (e) {
     e && e.stopPropagation();
-    $scope.fontSettingModal = false;
+    $scope.categoryModal = false;
   };
 
   // 字体
@@ -89,8 +99,15 @@ ireadControllers.controller("BookDetailCtrl", ['$scope', '$http', '$location', '
     $scope.fontSettingModal = true;
   };
   $scope.closeFontSettingModal = function (e) {
+    console.log(e);
     e && e.stopPropagation();
     $scope.fontSettingModal = false;
+  };
+  $scope.onFontLevelChange = function ($event) {
+    console.log($event);
+    // $scope.config.fontLevel = level
+    // storage.saveReadConfig($scope.config)
+    // $scope.closeFontSettingModal()
   };
   $scope.toBook = function () {
     $location.path("/");
@@ -129,13 +146,14 @@ ireadControllers.controller("BookDetailCtrl", ['$scope', '$http', '$location', '
     return $http.get(baseUrl + "/getChapterList?url=" + encodeURIComponent(bookUrl));
   }
   function setTitle() {
-    document.title = bookItem.name + " | " + catalog[bookItem.durChapterIndex || 0].title;
+    $scope.chapterIndex = bookItem.durChapterIndex;
+    document.title = bookItem.name + " | " + $scope.catalog[bookItem.durChapterIndex || 0].title;
   }
   function saveBookRemoteAndLocal(bookItem) {
     return storage.saveBook(bookItem).then(function () {
       return $http.post(baseUrl + "/saveBookProgress", _objectSpread(_objectSpread({}, bookItem), {}, {
         durChapterTime: new Date().getTime(),
-        durChapterTitle: catalog[bookItem.durChapterIndex || 0].title
+        durChapterTitle: $scope.catalog[bookItem.durChapterIndex || 0].title
       }));
     });
   }
@@ -174,7 +192,7 @@ ireadControllers.controller("BookDetailCtrl", ['$scope', '$http', '$location', '
   }
   function init() {
     getCatalog(bookItem.bookUrl).then(function (res) {
-      catalog = res.data.data;
+      $scope.catalog = res.data.data;
       var index = bookItem.durChapterIndex || 0;
       getContent(index, true, bookItem.durChapterPos).then(function () {
         $scope.loading = false;
