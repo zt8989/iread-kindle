@@ -12,8 +12,15 @@
 				},
 				{
 					"name": "Kill",
-					"priority": 5,
+					"priority": 2,
 					"action": "./kill.sh",
+					"param": "",
+					"exitmenu": false
+				},
+				{
+					"name": "Reset",
+					"priority": 3,
+					"action": "rm ./iread_kindle.db",
 					"param": "",
 					"exitmenu": false
 				}
