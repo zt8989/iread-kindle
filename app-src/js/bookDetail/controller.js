@@ -123,7 +123,6 @@ export function installController(module){
     P = document.getElementById("readerToolBar"),
     ve = document.documentElement.clientHeight,
     ke = window.outerHeight
-    var readerCatalog_tool = document.getElementById("readerCatalog_tool")
   
     $scope.nextPage = function (e) {
       // e && e.stopPropagation()
