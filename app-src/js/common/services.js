@@ -1,6 +1,6 @@
-const ireadServices = angular.module('ireadServices', []);
+const commonServices = angular.module('commonServices', []);
 
-ireadServices.factory("storage", ["$http", '$location', '$q', 
+commonServices.factory("storage", ["$http", '$location', '$q', 
   function storage($http, $location, $q){
   const search = $location.search()
   const server = {
@@ -130,7 +130,7 @@ ireadServices.factory("storage", ["$http", '$location', '$q',
   }
 }])
 
-ireadServices.constant("fonts", [
+commonServices.constant("fonts", [
   { key: "STHeiti", title: "黑体", css: "font-family: STHeiti, san-serif;" },
   { key: "STSong", title: "宋体", css: "font-family: STSong, serif;" },
   { key: "STKai", title: "楷体", css: "font-family: STKai, serif;" },

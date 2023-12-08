@@ -1,3 +1,9 @@
+import "./common/global.35483d"
+import "./common/cookie.0e551c"
+import "./common/services"
+import "./bookDetail"
+import "./bookList"
+
 var targetRatio = 300;
 function resetViewport() {
     var e = window.screen.width
@@ -15,7 +21,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 const ireadApp = angular.module('ireadApp', [
     'ngRoute',
-    'ireadControllers'
+    'bookDetail',
+    'bookList',
 ]);
 
 ireadApp.config(['$routeProvider',

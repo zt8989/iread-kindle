@@ -6,18 +6,26 @@ var gulpServer = require('gulp-webserver');
 var less = require('gulp-less');
 var path = require('path')
 var LessAutoprefix = require('less-plugin-autoprefix');
+const {createGulpEsbuild} = require('gulp-esbuild')
 require('dotenv').config({ path: '.env.' + (process.env.NODE_ENV || "development") })
 
-gulp.task('default', () =>
-    gulp.src('app-src/**/*')
+const gulpEsbuild = createGulpEsbuild({ incremental: true })
+
+function buildJs(){
+    return gulp.src('app-src/js/app.js')
         .pipe(babel())
+        .pipe(gulpEsbuild({
+            outfile: 'app.js',
+            bundle: true,
+        }))
         .pipe(gulp.dest('app/js'))
-);
+}
+
+gulp.task('default', buildJs);
 
 function watchJs(){
-    return watch('app-src/**/*.js', { ignoreInitial: false, verbose: true })
-        .pipe(babel())
-        .pipe(gulp.dest('app'))
+    return gulp.watch('app-src/**/*.js', { ignoreInitial: false },
+    gulp.series(buildJs))
 }
 
 function watchHtml(){
