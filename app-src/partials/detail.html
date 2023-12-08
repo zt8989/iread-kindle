@@ -1,7 +1,7 @@
 <div id="readerPage" class="readerPage readerPage_LastPage" ng-click="handleRenderPageClick($event)">
    <div id="readerPage_InShelf" class="readerPage_InShelf">
       <div id="readerPageScroll" class="readerPageScroll" style="opacity: 1;">
-         <div id="readerToolBar" class="readerToolBar readerToolBar_Expand" ng-click="$event.stopPropagation()">
+         <div id="readerToolBar" class="readerToolBar readerToolBar_Expand" ng-click="$event.stopPropagation()" kindle-bottom>
             <span id="readerToolBar_nextPage" class="readerToolBar_nextPage" ng-click="nextPage($event)">下一页</span> 
             <span id="readerToolBar_prevPage" class="readerToolBar_prevPage" ng-click="prevPage($event)">上一页</span> 
             <span id="readerToolBar_shelf" class="readerToolBar_shelf" ng-click="toBook()">书架</span> 
@@ -36,7 +36,7 @@
                   <span class="chapterItem_link chapterItem_level2">{{ cat.title }}</span>
                </li>
             </ul>
-            <div id="readerCatalog_tool" class="readerCatalog_tool"><span id="readerCatalog_prevPage"
+            <div id="readerCatalog_tool" class="readerCatalog_tool" kindle-bottom><span id="readerCatalog_prevPage"
                   class="readerCatalog_prevPage" ng-click="onCatalogPrevPage($event)">上一页</span> <span id="readerCatalog_nextPage"
                   class="readerCatalog_nextPage" ng-click="onCatalogNextPage($event)">下一页</span></div>
          </div>

@@ -124,9 +124,6 @@ export function installController(module){
     ve = document.documentElement.clientHeight,
     ke = window.outerHeight
     var readerCatalog_tool = document.getElementById("readerCatalog_tool")
-    var style = "padding-bottom:" + 1.5 * Math.abs(ke - ve) + "px !important"
-    P && (P.style.cssText = style);
-    readerCatalog_tool && (readerCatalog_tool.style.cssText = style);
   
     $scope.nextPage = function (e) {
       // e && e.stopPropagation()
