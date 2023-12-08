@@ -4,7 +4,6 @@
   "description": "My webpack project",
   "main": "index.js",
   "module": "./app-src/js/app.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp",
@@ -18,18 +17,19 @@
   "devDependencies": {
     "@babel/core": "^7.23.5",
     "@babel/preset-env": "^7.23.5",
+    "babel-loader": "^9.1.3",
     "babel-plugin-transform-inline-environment-variables": "^0.4.4",
     "cross-env": "^7.0.3",
     "dotenv": "^16.3.1",
     "gulp": "^4.0.2",
     "gulp-babel": "^8.0.0",
     "gulp-ejs": "^5.1.0",
-    "gulp-esbuild": "^0.12.0",
     "gulp-less": "^5.0.0",
     "gulp-watch": "^5.0.1",
     "gulp-webserver": "^0.9.1",
     "less": "^3.13.1",
-    "less-plugin-autoprefix": "^2.0.0"
+    "less-plugin-autoprefix": "^2.0.0",
+    "webpack-stream": "^7.0.0"
   },
   "dependencies": {
     "angular": "~1.3",

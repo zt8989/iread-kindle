@@ -7,6 +7,8 @@ var less = require('gulp-less');
 var path = require('path')
 var LessAutoprefix = require('less-plugin-autoprefix');
 const {createGulpEsbuild} = require('gulp-esbuild')
+const webpack = require('webpack-stream');
+
 require('dotenv').config({ path: '.env.' + (process.env.NODE_ENV || "development") })
 
 const gulpEsbuild = createGulpEsbuild({ incremental: true })
@@ -14,10 +16,25 @@ const gulpEsbuild = createGulpEsbuild({ incremental: true })
 function buildJs(){
     return gulp.src('app-src/js/app.js')
         .pipe(babel())
-        .pipe(gulpEsbuild({
-            outfile: 'app.js',
-            bundle: true,
-        }))
+        .pipe(
+            webpack({
+                mode: process.env.NODE_ENV || "development",
+                output: {
+                    filename: "app.js"
+                },
+                module: {
+                    rules: [
+                        {
+                        test: /\.m?js$/,
+                        exclude: /(node_modules)/,
+                        use: {
+                            loader: 'babel-loader',
+                        }
+                        }
+                    ]
+                }
+            })
+          )
         .pipe(gulp.dest('app/js'))
 }
 
